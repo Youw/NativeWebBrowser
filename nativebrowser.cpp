@@ -27,8 +27,11 @@ QSize NativeBrowser::sizeHint() const
 void NativeBrowser::updateGeometry()
 {
     QSize result = browser->sizeHint();
-    setMinimumSize(result);
-    QWidget::updateGeometry();
+    if (result.isValid())
+    {
+        setMinimumSize(result);
+        QWidget::updateGeometry();
+    }
     setMinimumSize(0,0);
     QWidget::updateGeometry();
 }

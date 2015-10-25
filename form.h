@@ -22,8 +22,6 @@ private slots:
     void onStart();
     void onFinish(bool ok);
 
-    void on_pushButton_clicked();
-
 private:
     Ui::Form *ui;
 };

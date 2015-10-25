@@ -352,8 +352,9 @@ public:
 
     virtual void navigate(const QString &_url) override
     {
-        current_url_host = QUrl::fromUserInput(_url).host();
-        bstr_t url(_url.toStdWString().c_str());
+        QString new_url(_url.isEmpty() ? "about:blank" : _url);
+        current_url_host = QUrl::fromUserInput(new_url).host();
+        bstr_t url(new_url.toStdWString().c_str());
         variant_t flags(navNoHistory);
         document_start_emited = false;
         m_webBrowser->Navigate(url, &flags, NULL, NULL, NULL);
@@ -1024,7 +1025,6 @@ private:
         {
             LONG nProgressMax = pDispParams->rgvarg[0].lVal;
             LONG nProgress = pDispParams->rgvarg[1].lVal;
-            qDebug() << nProgress << nProgressMax;
             onProgress(nProgress, nProgressMax);
             break;
         }
