@@ -22,8 +22,10 @@
 using std::wstring;
 
 #include <QDebug>
-#include <QUrl>
 #include <QString>
+#include <QTimer>
+#include <QUrl>
+
 
 namespace {
 
@@ -332,7 +334,9 @@ public:
     WinNativeBrowserImpl(HWND _mainWindow)
         : m_DWebBrowserEvents2_conn_id(0)
         , document_start_emited(false)
+        , load_progress_crunch(new QTimer(this))
     {
+        load_progress_crunch->setSingleShot(true);
         m_comRefCount = 0;
         m_mainWindow = _mainWindow;
 
@@ -348,6 +352,7 @@ public:
     virtual ~WinNativeBrowserImpl()
     {
         CloseBrowserObject();
+        delete load_progress_crunch;
     }
 
     virtual void navigate(const QString &_url) override
@@ -997,7 +1002,7 @@ private:
             QString navigate_url_host = QUrl::fromUserInput(navigate_url).host();
             if (current_url_host != navigate_url_host)
             {
-                if (!document_start_emited)
+                if (!document_start_emited && navigate_url != "about:blank")
                 {
                     // skip navigate
                     *pDispParams->rgvarg[0].pboolVal = VARIANT_TRUE;
@@ -1012,6 +1017,9 @@ private:
                 if (!document_start_emited)
                 {
                     document_start_emited = true;
+                    load_progress_crunch->disconnect(this);
+                    connect(load_progress_crunch, SIGNAL(timeout()), this, SLOT(navigateNotStarted()));
+                    load_progress_crunch->start(5000);
                     onLoadStart();
                 }
             }
@@ -1025,12 +1033,33 @@ private:
         {
             LONG nProgressMax = pDispParams->rgvarg[0].lVal;
             LONG nProgress = pDispParams->rgvarg[1].lVal;
+            if (load_progress_crunch->isActive())
+            {
+                load_progress_crunch->disconnect(this);
+                connect(load_progress_crunch, SIGNAL(timeout()), this, SLOT(navigateFinished()));
+                load_progress_crunch->start(600);
+            }
             onProgress(nProgress, nProgressMax);
             break;
         }
         }
 
         return S_OK;
+    }
+
+    void navigateNotStarted() override
+    {
+        stop();
+        current_url_host = QUrl::fromUserInput(location()).host();
+        document_start_emited = false;
+        onLoadFinish(false);
+    }
+
+    void navigateFinished() override
+    {
+        current_url_host = QUrl::fromUserInput(location()).host();
+        document_start_emited = false;
+        onLoadFinish(true);
     }
 
 private:
@@ -1044,6 +1073,7 @@ private:
     DWORD m_DWebBrowserEvents2_conn_id;
     QString current_url_host;
     bool document_start_emited;
+    QTimer *load_progress_crunch;
 };
 
 NativeBrowserImpl* NativeBrowserImpl::createNewInstance(WId browserwindow)

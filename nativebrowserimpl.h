@@ -39,10 +39,9 @@ protected:
 private:
     NativeBrowser *parent_wnd;
 #ifdef Q_OS_WIN
-    QTimer        *load_progress_crunch;
-private slots:
-    void navigateNotStarted();
-    void navigateFinished();
+protected slots:
+    virtual void navigateNotStarted() = 0;
+    virtual void navigateFinished() = 0;
 #endif
 };
 
