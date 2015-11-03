@@ -17,7 +17,6 @@ public:
     QString url() const;
 
     QSize sizeHint() const override;
-    void updateGeometry();
 
 signals:
     void loadStarted();
@@ -33,7 +32,7 @@ protected slots:
     void loadBlank();
 
 protected:
-    virtual void resizeEvent(QResizeEvent *);
+    virtual void resizeEvent(QResizeEvent *) override;
 
 private:
     friend class NativeBrowserImpl;

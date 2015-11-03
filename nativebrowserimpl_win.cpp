@@ -26,7 +26,6 @@ using std::wstring;
 #include <QTimer>
 #include <QUrl>
 
-
 namespace {
 
 static bool SetBrowserFeatureControlKey(wstring feature, const wchar_t *appName, DWORD value) {

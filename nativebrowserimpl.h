@@ -32,9 +32,11 @@ protected:
     void onProgress(int current_progress, int max_progress);
     void onLoadStart();
     void onLoadFinish(bool success);
-    void onExternalNavigate(const QString &external_url);
 
     void queuedNavigate(const QString &url);
+
+protected slots:
+    void onExternalNavigate(const QString &external_url);
 
 private:
     NativeBrowser *parent_wnd;

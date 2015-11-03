@@ -35,7 +35,7 @@ void NativeBrowserImpl::onProgress(int current_progress, int max_progress)
     }
     else
     {
-        progress = int(double(current_progress)/max_progress);
+        progress = int(double(current_progress)/max_progress * 100);
     }
     if (!parent_wnd) return;
     parent_wnd->updateGeometry();

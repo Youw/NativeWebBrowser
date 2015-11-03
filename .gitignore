@@ -1,3 +1,5 @@
 build*/
 *.user
 *.user.*
+.DS_Store
+bin*/

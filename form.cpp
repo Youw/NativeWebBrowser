@@ -41,3 +41,8 @@ void Form::onFinish(bool ok)
 {
     qDebug() << "finish:" << ok;
 }
+
+void Form::on_pushButton_clicked()
+{
+    adjustSize();
+}
