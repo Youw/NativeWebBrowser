@@ -13,7 +13,7 @@ macx:OBJECTIVE_SOURCES += \
     $$PWD/nativebrowserimpl_mac.mm
 
 win32:LIBS *= -lOle32 -lOleAut32 -lGdi32
- macx:LIBS *= -framework WebKit -framework Foundation
+ macx:LIBS += -framework WebKit -framework Foundation
 
 HEADERS += \
     $$PWD/nativebrowser.h \
